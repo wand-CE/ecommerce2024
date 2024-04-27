@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Meu Ecommerce - Categorias {% endblock %}
+
+{% block conteudo %}
+    <article>
+        <div>
+            <p id="localimg" style="text-align: center;">
+                <img id="imgprod" src="{% if produto.imagem %} {{produto.imagem.url}}
+                                  {% else %} {% static 'imagens/notfound.jfif' %}
+                                  {% endif %}" alt="imagem de {{ produto.nome }}">
+            </p>
+            <div id="imggrande"></div>
+        </div>
+        <p> {{ produto.descricao }}</p>
+        <a href="" role="button" class="success">adicionar ao carrinho</a>
+    </article>
+    <script>
+        imgprod.onmousemove = function(ev){
+            let src = imgprod.src;
+            let alt = imgprod.alt;
+            imggrande.innerHTML = "<img src=" +  src + " alt='' id='imgprodg'>";
+            imggrande.style.position = "absolute";
+            let imagem = imgprodg;
+            imagem.style.width = '300px';
+            const posX = event.clientX + 5; // Posição horizontal do cursor
+            const posY = event.clientY + 5; // Posição vertical do cursor
+
+            // Atualize a posição do elemento
+            imggrande.style.left = `${posX}px`;
+            imggrande.style.top = `${posY}px`;
+            imggrande.style.visibility = "visible";
+            imggrande.style.backgroundColor = "rgba(255,255,255,0.5)";
+        }
+        imgprod.onmouseout = function(){
+            imggrande.style.visibility = "hidden";
+        }
+    </script>
+{% endblock %}
