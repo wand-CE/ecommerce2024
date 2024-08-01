@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block conteudo %}
+    <article>
+        <h1>Seu carrinho de compras 🛒</h1>
+        <table>
+            <thead data-theme="dark">
+            <tr>
+                <th>Imagem</th>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Preço unitário</th>
+                <th>Total</th>
+                <th>Remover</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in carrinho %}
+                {% with prod=item.produto %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'detalheproduto' prod.slug prod.id %}">
+                                <img src="{% if prod.imagem %}
+                                          {{ prod.image.url }}
+                                      {% else %}
+                                          {% static 'imagens/notfound.jfif' %}
+                                      {% endif %}"
+                                     alt="Imagem do produto {{ prod.nome }}"
+                                     width="90" height="100">
+                            </a>
+                        </td>
+                        <td>{{ prod.nome }}</td>
+                        <!--Mostrando o campo de formulário para alterar a quant no carrinho -->
+                        <td>
+                            <form action="{% url 'carrinhoadd' %}" method="post">
+                                {% csrf_token %}
+                                {{ item.alterar.quant }}
+                                {{ item.alterar.alterar }}
+                                <input type="submit" value="Atualizar" role="button" class="success">
+                            </form>
+                        </td>
+                        <td>R$ {{ item.preco }}</td>
+                        <td>R$ {{ carrinho.get_preco_total }}</td>
+                        <td>
+                            <form action="{% url 'carrinhoremove' prod.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="submit" role="button" class="danger" value="Remover">
+                            </form>
+                        </td>
+                    </tr>
+                {% endwith %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </article>
+{% endblock conteudo %}

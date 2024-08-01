@@ -7,20 +7,23 @@
     <article>
         <div>
             <p id="localimg" style="text-align: center;">
-                <img id="imgprod" src="{% if produto.imagem %} {{produto.imagem.url}}
+                <img id="imgprod" src="{% if produto.imagem %} {{ produto.imagem.url }}
                                   {% else %} {% static 'imagens/notfound.jfif' %}
                                   {% endif %}" alt="imagem de {{ produto.nome }}">
             </p>
             <div id="imggrande"></div>
         </div>
         <p> {{ produto.descricao }}</p>
-        <a href="" role="button" class="success">adicionar ao carrinho</a>
+        <form action="{% url 'carrinhoadd' produto.id %}" method="post">
+            {% csrf_token %}
+            <input role="button" value="Adicionar ao carrinho" type="submit">
+        </form>
     </article>
     <script>
-        imgprod.onmousemove = function(ev){
+        imgprod.onmousemove = function (ev) {
             let src = imgprod.src;
             let alt = imgprod.alt;
-            imggrande.innerHTML = "<img src=" +  src + " alt='' id='imgprodg'>";
+            imggrande.innerHTML = "<img src=" + src + " alt='' id='imgprodg'>";
             imggrande.style.position = "absolute";
             let imagem = imgprodg;
             imagem.style.width = '300px';
@@ -33,7 +36,7 @@
             imggrande.style.visibility = "visible";
             imggrande.style.backgroundColor = "rgba(255,255,255,0.5)";
         }
-        imgprod.onmouseout = function(){
+        imgprod.onmouseout = function () {
             imggrande.style.visibility = "hidden";
         }
     </script>

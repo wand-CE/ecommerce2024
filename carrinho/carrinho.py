@@ -8,7 +8,7 @@ from catproduto.models import Produto
 
 
 class Carrinho:
-    def __init__(self):
+    def __init__(self, request):
         """
         Inicializa o carrinho de compras
         """
