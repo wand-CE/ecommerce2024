@@ -1,16 +1,16 @@
 from decimal import Decimal
 
 from django.conf import settings
-from django.contrib.sites import requests
 from django.http import request
 
 from catproduto.models import Produto
 
 
-class Carrinho:
+class Carrinho(object):
+
     def __init__(self, request):
         """
-        Inicializa o carrinho de compras
+        Iniciliza o carrinho de compras
         """
         self.session = request.session
         carrinho = self.session.get(settings.CART_SESSION_ID)
@@ -19,59 +19,58 @@ class Carrinho:
             carrinho = self.session[settings.CART_SESSION_ID] = {}
         self.carrinho = carrinho
 
-    def addProduto(self, produto, quantidade=1, alterar_quant=False):
+    def addProduto(self, produto, quantidade=1, alterarquant=False):
         """
-        Adiciona um produto ao carrinho ou atualiza a quantidade de um determinado
-        produto
-        :param produto: produto a ser adicionado ou alterado a quant
+        Adiciona um produto ao carrinho ou atualiza a quantidade de um
+        determinado produto
+        :param produto: O produto a ser adicionado ou alterado a quant
         :param quantidade: A quantidade de unidades do produto a ser adicionado
-        :param alterar_quant: Quando necessário alterar a quantidade do produto no carrinho
-        :return :
+        :param alterarquant: Quando necessário alterar a quantidade do produto no carrinho
+        :return: Sem retorno
         """
-        id_produto = str(produto.id)
-        if id_produto not in self.carrinho:
-            self.carrinho[id_produto] = {'quantidade': quantidade, 'preco': str(produto.preco)}
-        if alterar_quant:
-            self.carrinho[id_produto]['quantidade'] = quantidade
+        idproduto = str(produto.id)
+        if idproduto not in self.carrinho:
+            self.carrinho[idproduto] = {'quantidade': 0, 'preco': str(produto.preco)}
+        if alterarquant:
+            self.carrinho[idproduto]['quantidade'] = quantidade
         else:
-            self.carrinho[id_produto]['quantidade'] += quantidade
+            self.carrinho[idproduto]['quantidade'] += quantidade
         self._salvar()
 
     def _salvar(self):
         self.session.modified = True
 
-    def remover_produto(self, produto):
+    def removerProduto(self, produto):
         """
         Remove um produto do carrinho
-        :param  produto: o produto a ser removido
-        :return:
+        :param produto: O produto a ser removido
+        :return: sem retorno
         """
-        id_produto = str(produto.id)
-        if id_produto not in self.carrinho:
-            del self.carrinho[id_produto]
+        idproduto = str(produto.id)
+        if idproduto in self.carrinho:
+            del self.carrinho[idproduto]
             self._salvar()
+
 
     def __iter__(self):
         """
         Itera sobre o carrinho e obtem os produtos do banco de dados
-        :return
+        :return: sem retorno
         """
-        ids_produtos = self.carrinho.keys()
-        produtos = Produto.objects.filter(id__in=ids_produtos)
+        idsprodutos = self.carrinho.keys()
+        produtos = Produto.objects.filter(id__in=idsprodutos)
         carrinho = self.carrinho.copy()
         for p in produtos:
             carrinho[str(p.id)]['produto'] = p
-
         for item in carrinho.values():
             item['preco'] = Decimal(item['preco'])
-            item['total'] = item['preco'] * item['quantidade']
-
+            item['preco_total'] = item['preco'] * item['quantidade']
             yield item
 
     def __len__(self):
         """
         Soma as quantidades de itens que o carrinho possui
-        : return: A quantidade de itens do carrinho
+        :return: A quantidade itens do carrinho
         """
         return sum(item['quantidade'] for item in self.carrinho.values())
 
@@ -79,8 +78,5 @@ class Carrinho:
         return sum(Decimal(item['preco']) * item['quantidade'] for item in self.carrinho.values())
 
     def limpar(self):
-        """
-
-        """
         del self.session[settings.CART_SESSION_ID]
         self._salvar()

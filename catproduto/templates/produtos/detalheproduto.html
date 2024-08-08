@@ -7,7 +7,7 @@
     <article>
         <div>
             <p id="localimg" style="text-align: center;">
-                <img id="imgprod" src="{% if produto.imagem %} {{ produto.imagem.url }}
+                <img id="imgprod" src="{% if produto.imagem %} {{produto.imagem.url}}
                                   {% else %} {% static 'imagens/notfound.jfif' %}
                                   {% endif %}" alt="imagem de {{ produto.nome }}">
             </p>
@@ -15,18 +15,19 @@
         </div>
         <p> {{ produto.descricao }}</p>
         <form action="{% url 'carrinhoadd' produto.id %}" method="post">
+            {{ formadd }}
             {% csrf_token %}
-            <input role="button" value="Adicionar ao carrinho" type="submit">
+            <input type="submit" value="adicionar ao carrinho" role="button"
+                   class="primary">
         </form>
     </article>
     <script>
-        imgprod.onmousemove = function (ev) {
+        imgprod.onmousemove = function(ev){
             let src = imgprod.src;
             let alt = imgprod.alt;
-            imggrande.innerHTML = "<img src=" + src + " alt='' id='imgprodg'>";
+            imggrande.innerHTML = "<img src=" +  src + " alt='' id='imgprodg' width='300'>";
             imggrande.style.position = "absolute";
             let imagem = imgprodg;
-            imagem.style.width = '300px';
             const posX = event.clientX + 5; // Posição horizontal do cursor
             const posY = event.clientY + 5; // Posição vertical do cursor
 
@@ -36,7 +37,7 @@
             imggrande.style.visibility = "visible";
             imggrande.style.backgroundColor = "rgba(255,255,255,0.5)";
         }
-        imgprod.onmouseout = function () {
+        imgprod.onmouseout = function(){
             imggrande.style.visibility = "hidden";
         }
     </script>

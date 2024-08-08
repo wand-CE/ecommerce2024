@@ -10,13 +10,15 @@
 <main class="container">
     <nav>
         <ul>
-            <li style="font-size:2rem"><strong><a href="{% url 'home' %}">🏢</a>&nbsp;&nbsp;&nbsp;Meu Ecommerce</strong>
-            </li>
+            <li style="font-size:2rem"><strong><a href="{% url 'home' %}">🏢</a>&nbsp;&nbsp;&nbsp;Meu Ecommerce</strong></li>
         </ul>
         <ul>
             <li><a href="#">Sobre</a></li>
             <li><a href="{% url 'listallprod' %}">Produtos</a></li>
-            <li><a href="{% url 'carrinhodetalhe' %}">Carrinho<span>🛒 {{ carrinho|length }}</span></a></li>
+            <li><a href="{% url 'carrinhodetalhe' %}">
+                    Carrinho <span>🛒 {{ carrinho|length }}</span>
+                </a>
+            </li>
         </ul>
     </nav>
     {% block conteudo %}
